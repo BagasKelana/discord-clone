@@ -9,12 +9,13 @@ export async function PATCH(
 	try {
 		const profile = await currentProfile();
 		const { name, imageUrl } = await req.json();
+		console.log(name, imageUrl);
 
 		if (!profile) {
 			return new NextResponse('Unauthorized', { status: 400 });
 		}
 
-		const server = db.server.update({
+		const server = await db.server.update({
 			where: {
 				id: params.serverId,
 				profileId: profile.id,

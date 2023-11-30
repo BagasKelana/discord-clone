@@ -5,6 +5,7 @@ import axios from 'axios';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { ChannelType } from '@prisma/client';
 
 import {
 	Dialog,
@@ -25,7 +26,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useParams, useRouter } from 'next/navigation';
 import { useModal } from '@/hooks/use-modal-store';
-
 import {
 	Select,
 	SelectContent,
@@ -33,8 +33,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-
-import { ChannelType } from '@prisma/client';
+import { useEffect } from 'react';
 
 const formSchema = z.object({
 	name: z
@@ -43,25 +42,34 @@ const formSchema = z.object({
 			message: 'Channel name is required.',
 		})
 		.refine((name) => name !== 'general', {
-			message: "Channel name cannot be 'general' ",
+			message: "Channel name cannot be 'general'",
 		}),
 	type: z.nativeEnum(ChannelType),
 });
 
 export const CreateChannelModal = () => {
-	const { isOpen, onClose, type } = useModal();
+	const { isOpen, onClose, type, data } = useModal();
 	const router = useRouter();
 	const params = useParams();
 
 	const isModalOpen = isOpen && type === 'createChannel';
+	const { channelType } = data;
 
 	const form = useForm({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			name: '',
-			type: ChannelType.TEXT,
+			type: channelType || ChannelType.TEXT,
 		},
 	});
+
+	useEffect(() => {
+		if (channelType) {
+			form.setValue('type', channelType);
+		} else {
+			form.setValue('type', ChannelType.TEXT);
+		}
+	}, [channelType, form]);
 
 	const isLoading = form.formState.isSubmitting;
 
@@ -135,7 +143,7 @@ export const CreateChannelModal = () => {
 											defaultValue={field.value}>
 											<FormControl>
 												<SelectTrigger className="bg-zinc-300/50 border-0 focus:ring-0 text-black ring-offset-0 focus:ring-offset-0 capitalize outline-none">
-													<SelectValue placeholder="Select a channel type" />
+													<SelectValue />
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
@@ -143,7 +151,7 @@ export const CreateChannelModal = () => {
 													(type) => (
 														<SelectItem
 															key={type}
-															value="type"
+															value={type}
 															className="capitalize">
 															{type.toLowerCase()}
 														</SelectItem>

@@ -4,6 +4,7 @@ import axios from 'axios';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { useEffect } from 'react';
 
 import {
 	Dialog,
@@ -26,7 +27,6 @@ import { Button } from '@/components/ui/button';
 import { FileUpload } from '@/components/file-upload';
 import { useRouter } from 'next/navigation';
 import { useModal } from '@/hooks/use-modal-store';
-import { useEffect } from 'react';
 
 const formSchema = z.object({
 	name: z.string().min(1, {
@@ -42,7 +42,6 @@ export const EditServerModal = () => {
 	const router = useRouter();
 
 	const isModalOpen = isOpen && type === 'editServer';
-
 	const { server } = data;
 
 	const form = useForm({
