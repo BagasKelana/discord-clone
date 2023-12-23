@@ -25,6 +25,7 @@ interface ServerSearchProps {
 			| undefined;
 	}[];
 }
+
 export const ServerSearch = ({ data }: ServerSearchProps) => {
 	const [open, setOpen] = useState(false);
 	const router = useRouter();
@@ -95,7 +96,7 @@ export const ServerSearch = ({ data }: ServerSearchProps) => {
 											key={id}>
 											{icon}
 											<span>{name}</span>
-										</CommandItem> 
+										</CommandItem>
 									);
 								})}
 							</CommandGroup>
